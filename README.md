@@ -7,4 +7,5 @@ Step One: Processing singular dataset into pandas dataframe, organized, then vis
 Addition of file name reading:
  - Allows for automatic assignment of file name for opening with pandas
  - Allows for automatic assignment of file name for plotting title
- - Allows for spectra filtering through gaussian curve
+(14.02.21 23:26)
+ - Allows for spectra filtering through gaussian curve and recording of determined peak coordinates (for peak comparison) 

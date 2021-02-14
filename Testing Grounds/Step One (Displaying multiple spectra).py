@@ -4,7 +4,7 @@ import os.path
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal, ndimage
-# Assignment of vairables 
+# Assignment of variables 
 data_dir = "Project Data" # Directory of data to be used
 gaussian = False
 
@@ -21,14 +21,14 @@ def x_axis_limits(func_dataframe): # Detecting x axis max min for plotting axis 
     return (x_max_rounded_value, x_min_rounded_value) 
 
 def x_y_assignment(func_dataframe):
-    x = func_dataframe.iloc[:, 0] # Assinging x value based on column index over name
+    x = func_dataframe.iloc[:, 0] # Assigning x value based on column index over name
     y = func_dataframe.iloc[:, 1] # Assigning y value based on column index over name
     # print(x,y) Testing output
     return(x, y)
 
 def minima_peak_assignment(func_dataframe):
     y = func_dataframe.iloc[:, 1] # Assigning y value based on column index over name
-    x = func_dataframe.iloc[:, 0] # Assinging x value based on column index over name
+    x = func_dataframe.iloc[:, 0] # Assigning x value based on column index over name
     y_neg = y*-1 # inverts the y values as spectra peaks face downwards
     minima = signal.find_peaks(y_neg, height = -0.95, distance = 20) # Identifies minima as (x,y) co-ords 2D array
     min_pos = x[minima[0]] # 1d array of minima x values
@@ -46,8 +46,18 @@ def gaussian_smoothing(func_dataframe):
         # print(x,y) Testing output
         return(x,y)
     else:
-        return None 
-        
+        return None
+
+def transpose_record_peaks(func_dataframe): # Records and formates the peak coords within pandas dataframe
+    a = pd.DataFrame(minima_peak_assignment(func_dataframe)) # Addition of x,y coord 1D array to panads dataframe
+    b = a.transpose() # Transposes dataframe row to column for x,y titles
+    return b # returns the final dataframe 
+    #TODO: Find way to remove old row index values and replace with decending numericals, easy of access
+
+def peak_comparison(primary_peak_dataframe, secondary_peak_dataframe):
+    #TODO: Compare data sets to determine if they are statistically similar or not and display result
+    break
+
 # Main Loop
 print("-----------------------------START----------------------------------")
 
@@ -58,6 +68,11 @@ df = pd.read_csv(list_full_paths(data_dir)[0], sep='	', header=None, usecols=[0,
 df.columns = ["Wavenumber", "Transmittance"] # Naming Columns
 df2 = pd.read_csv(list_full_paths(data_dir)[7], sep='	', header=None, usecols=[0, 1]) # Odd seperator, files without header and removes excess data
 df2.columns = ["Wavenumber", "Transmittance"] # Naming Columns
+# Recording and transcribing peak data to dataframe 
+peakdf = transpose_record_peaks(df)
+peakdf2 = transpose_record_peaks(df2)
+# print(peakdf.head())
+# print(peakdf2.head())
 # print(df.head(5))  # Shows pre manipulation datframe as imported from files 
 # print(df2.head(5)) # Shows pre manipulation datframe as imported from files 
 
@@ -82,6 +97,6 @@ fig.text(0.04, 0.5, 'Transmittance', ha='center', va='center', rotation='vertica
 plt.xlim(x_axis_limits(df)) # defines the x axis limits by the datasets max and min values
 plt.show()
 # print(df.head(5))   # Shows post manipulation dataframe 
-# print(df2.head(5)) # Shows post manipulation dataframe 
+# print(df2.head(5))
 
 print("------------------------------END-----------------------------------")
