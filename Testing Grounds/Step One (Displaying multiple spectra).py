@@ -56,8 +56,7 @@ def transpose_record_peaks(func_dataframe): # Records and formates the peak coor
 
 def peak_comparison(primary_peak_dataframe, secondary_peak_dataframe):
     #TODO: Compare data sets to determine if they are statistically similar or not and display result
-    break
-
+    None
 # Main Loop
 print("-----------------------------START----------------------------------")
 
