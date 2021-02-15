@@ -63,6 +63,7 @@ print("-----------------------------START----------------------------------")
 print(list_full_paths(data_dir))
 # Importing ASCII data formate into a workable panads dataframe
 # TODO: Need to build reading and writing files to a Dataframe to a function that can be called (Automation)
+# TODO: Need to implement method for reading files with differing separators
 df = pd.read_csv(list_full_paths(data_dir)[0], sep='	', header=None, usecols=[0, 1]) # Odd seperator, files without header and removes excess data
 df.columns = ["Wavenumber", "Transmittance"] # Naming Columns
 df2 = pd.read_csv(list_full_paths(data_dir)[7], sep='	', header=None, usecols=[0, 1]) # Odd seperator, files without header and removes excess data
