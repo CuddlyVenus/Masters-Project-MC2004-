@@ -80,16 +80,26 @@ peakdf2 = transpose_record_peaks(df2)
 gaussian_smoothing(df)
 gaussian_smoothing(df2)
 
+#Graphing values:
+primary_x = x_y_assignment(df)[0]
+primary_y = x_y_assignment(df)[1]
+primary_min_pos = minima_peak_assignment(df)[0]
+primary_min_height_neg = minima_peak_assignment(df)[1]
+secondary_x = x_y_assignment(df2)[0]
+secondary_y = x_y_assignment(df2)[1]
+secondary_min_pos = minima_peak_assignment(df2)[0]
+secondary_min_height_neg = minima_peak_assignment(df2)[1]
+
 # Plotting Graph
 fig = plt.figure()
 fig.canvas.set_window_title('Spectra Comparison.fig')
 (ax, ax1) = fig.subplots(2, sharex=True)
 ax.set_title(list_full_paths(data_dir)[0])
 ax1.set_title(list_full_paths(data_dir)[7])
-ax.plot(x_y_assignment(df)[0], x_y_assignment(df)[1], color='red', linewidth=0.5) # Sub plot one of line x,y
-ax1.plot(x_y_assignment(df2)[0], x_y_assignment(df2)[1], color='red', linewidth=0.5) # Sub plot two of line x2,y2
-ax.scatter(minima_peak_assignment(df)[0], minima_peak_assignment(df)[1], color = 'black', s = 5, marker = 'X', label = 'Prominant Peaks') # Sub plot one minima identification
-ax1.scatter(minima_peak_assignment(df2)[0], minima_peak_assignment(df2)[1], color = 'black', s = 5, marker = 'X') # Sub plot two minima identification
+ax.plot(primary_x, primary_y, color='red', linewidth=0.5) # Sub plot one of line x,y
+ax1.plot(secondary_x, secondary_y, color='red', linewidth=0.5) # Sub plot two of line x2,y2
+ax.scatter(primary_min_pos, primary_min_height_neg, color = 'black', s = 5, marker = 'X', label = 'Prominant Peaks') # Sub plot one minima identification
+ax1.scatter(secondary_min_pos, secondary_min_height_neg, color = 'black', s = 5, marker = 'X') # Sub plot two minima identification
 fig.legend()
 fig.suptitle("FT-IR Spectra Comparison")
 plt.xlabel('Wavenumber (cm-1)')
