@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy import signal, ndimage
 # Assignment of variables 
 data_dir = "Project Data" # Directory of data to be used
-gaussian = False
+gaussian = True
 
 # Functions:
 def list_full_paths(directory): # List of files in project data with full path
@@ -17,13 +17,11 @@ def x_axis_limits(func_dataframe): # Detecting x axis max min for plotting axis 
     min_axis = func_dataframe.min(axis=0)
     x_max_rounded_value = round(max_axis[0], 0)
     x_min_rounded_value = round(min_axis[0], 0)
-    # print(x_max_rounded_value, x_min_rounded_value) # Testing output
     return (x_max_rounded_value, x_min_rounded_value) 
 
 def x_y_assignment(func_dataframe):
     x = func_dataframe.iloc[:, 0] # Assigning x value based on column index over name
     y = func_dataframe.iloc[:, 1] # Assigning y value based on column index over name
-    # print(x,y) Testing output
     return(x, y)
 
 def minima_peak_assignment(func_dataframe):
@@ -43,7 +41,6 @@ def gaussian_smoothing(func_dataframe):
         # TODO: Need to determine cause of false peak identification when sigma = 1
         func_dataframe.insert(0, 'Gaussian Wavenumber', x, False) # updates dataframe with new gaussian values x axis (Cheap hack)
         func_dataframe.insert(1, 'Gaussian Transmittance', y, False)# updates dataframe with new gaussian values y axis (cheap hack)
-        # print(x,y) Testing output
         return(x,y)
     else:
         return None
@@ -68,27 +65,20 @@ df = pd.read_csv(list_full_paths(data_dir)[0], sep='	', header=None, usecols=[0,
 df.columns = ["Wavenumber", "Transmittance"] # Naming Columns
 df2 = pd.read_csv(list_full_paths(data_dir)[7], sep='	', header=None, usecols=[0, 1]) # Odd seperator, files without header and removes excess data
 df2.columns = ["Wavenumber", "Transmittance"] # Naming Columns
-# Recording and transcribing peak data to dataframe 
+
+# Recording and transposing peak data to dataframe 
 peakdf = transpose_record_peaks(df)
 peakdf2 = transpose_record_peaks(df2)
-# print(peakdf.head())
-# print(peakdf2.head())
-# print(df.head(5))  # Shows pre manipulation datframe as imported from files 
-# print(df2.head(5)) # Shows pre manipulation datframe as imported from files 
 
 # Manipulation of dataframe
 gaussian_smoothing(df)
 gaussian_smoothing(df2)
 
 #Graphing values:
-primary_x = x_y_assignment(df)[0]
-primary_y = x_y_assignment(df)[1]
-primary_min_pos = minima_peak_assignment(df)[0]
-primary_min_height_neg = minima_peak_assignment(df)[1]
-secondary_x = x_y_assignment(df2)[0]
-secondary_y = x_y_assignment(df2)[1]
-secondary_min_pos = minima_peak_assignment(df2)[0]
-secondary_min_height_neg = minima_peak_assignment(df2)[1]
+primary_x,primary_y = x_y_assignment(df)
+primary_min_pos,primary_min_height_neg = minima_peak_assignment(df)
+primary_x,primary_y = x_y_assignment(df2)
+primary_min_pos,primary_min_height_neg = minima_peak_assignment(df2)
 
 # Plotting Graph
 fig = plt.figure()
@@ -106,7 +96,5 @@ plt.xlabel('Wavenumber (cm-1)')
 fig.text(0.04, 0.5, 'Transmittance', ha='center', va='center', rotation='vertical')
 plt.xlim(x_axis_limits(df)) # defines the x axis limits by the datasets max and min values
 plt.show()
-# print(df.head(5))   # Shows post manipulation dataframe 
-# print(df2.head(5))
 
 print("------------------------------END-----------------------------------")
