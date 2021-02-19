@@ -10,4 +10,6 @@ Addition of file name reading:
  - Allows for automatic assignment of file name for plotting title
 ## (14.02.21 23:26)
 Addition of Gaussian Filtering and Peak Recording:
- - Allows for spectra filtering through gaussian curve and recording of determined peak coordinates (for peak comparison) 
+ - Allows for spectra filtering through gaussian curve and recording of determined peak coordinates (for peak comparison)
+ ## (19.02.21 15:39)
+Reworked Function variable assignment to limit function calling to minimum needed
