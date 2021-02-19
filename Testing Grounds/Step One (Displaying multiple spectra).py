@@ -4,9 +4,13 @@ import os.path
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal, ndimage
+from codetiming import Timer
 # Assignment of variables 
+t = Timer(name="class")
+t.start()
 data_dir = "Project Data" # Directory of data to be used
 gaussian = True
+
 
 # Functions:
 def list_full_paths(directory): # List of files in project data with full path
@@ -77,8 +81,8 @@ gaussian_smoothing(df2)
 #Graphing values:
 primary_x,primary_y = x_y_assignment(df)
 primary_min_pos,primary_min_height_neg = minima_peak_assignment(df)
-primary_x,primary_y = x_y_assignment(df2)
-primary_min_pos,primary_min_height_neg = minima_peak_assignment(df2)
+secondary_x,secondary_y = x_y_assignment(df2)
+secondary_min_pos,secondary_min_height_neg = minima_peak_assignment(df2)
 
 # Plotting Graph
 fig = plt.figure()
@@ -95,6 +99,6 @@ fig.suptitle("FT-IR Spectra Comparison")
 plt.xlabel('Wavenumber (cm-1)')
 fig.text(0.04, 0.5, 'Transmittance', ha='center', va='center', rotation='vertical')
 plt.xlim(x_axis_limits(df)) # defines the x axis limits by the datasets max and min values
+t.stop()
 plt.show()
-
 print("------------------------------END-----------------------------------")
