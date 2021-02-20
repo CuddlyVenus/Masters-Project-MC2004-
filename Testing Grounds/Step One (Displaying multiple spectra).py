@@ -5,8 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal, ndimage
 from codetiming import Timer
-# Assignment of variables 
-t = Timer(name="class")
+# Assignment of code timer 
+t = Timer(name="class", text="Total Runtime: {:.4f}s")
+# Assignment of variables
 t.start()
 data_dir = "Project Data" # Directory of data to be used
 gaussian = True
@@ -37,6 +38,9 @@ def minima_peak_assignment(func_dataframe):
     min_height = y_neg[minima[0]] # 1d array of minima y values
     min_height_neg = min_height*-1
     return(min_pos, min_height_neg)
+
+def peak_width_assignment(func_dataframe):
+    None
 
 def gaussian_smoothing(func_dataframe):
     if gaussian == True:
