@@ -51,14 +51,28 @@ def x_y_assignment(func_dataframe):
     return(x, y)
 
 def maxima_peak_assignment(x_array, y_array):
-    y = y_array # Assigning y value based on column index over name
-    x = x_array # Assigning x value based on column index over name
-    # y_neg = y*-1 # inverts the y values as spectra peaks face downwards
-    minima = signal.find_peaks(y, height = 0.3, distance = 20) # Identifies minima as (x,y) co-ords 2D array
-    min_pos = x[minima[0]] # 1d array of minima x values
-    min_height = y[minima[0]] # 1d array of minima y values
-    # min_height_neg = min_height*-1
-    return(min_pos, min_height)
+    peaks, _ = signal.find_peaks(y_array, distance=20, prominence=0.01) 
+    x_peaks = x_array[peaks]
+    y_peaks = y_array[peaks]
+    return(x_peaks, y_peaks)
+
+def prominence_assignment(x_array, y_array):
+    peaks, _ = signal.find_peaks(y_array, distance=20, prominence=0.01) 
+    prominence, left_bases, right_bases = signal.peak_prominences(y_array, peaks)# produces the indices of the peaks in relation to y axis
+    y_min = y_array[peaks] - prominence
+    y_max = y_array[peaks]
+    x = x_array[peaks]
+    return(x, y_min, y_max)
+
+def width_assignment(x_array, y_array):
+    peaks, _ = signal.find_peaks(y_array, distance=20, prominence=0.01)
+    prominence, left_bases, right_bases = signal.peak_prominences(y_array, peaks)# produces the indices of the peaks in relation to y axis
+    # results_half = signal.peak_widths(y_array, peaks, rel_height=0.5, prominence_data=(prominence, left_bases, right_bases))
+    results_full = signal.peak_widths(y_array, peaks, rel_height=1, prominence_data=((y_array[peaks] - prominence), left_bases, right_bases))
+    y = y_array[peaks] - prominence
+    x_min = results_full[2]
+    x_max = results_full[3]
+    return(y, x_array[left_bases], x_array[right_bases])
 
 def graph_peak_arrangement(y_array): # Determins a mode baseline and assesses peak y direction, inverts for negative peak direction
     y_arr = np.array(y_array)
@@ -118,7 +132,7 @@ def peak_comparison():
 # Main Loop
 print("-----------------------------START----------------------------------")
 
-print(list_full_paths(data_dir))
+file_list = np.array(list_full_paths(data_dir))
 # Importing ASCII data formate into a workable panads dataframe
 # TODO: Need to build reading and writing files to a Dataframe to a function that can be called (Automation)
 # TODO: Need to implement method for reading files with differing separators
@@ -128,7 +142,9 @@ df = pd.read_csv(list_full_paths(data_dir)[0], sep=' ', header=None, usecols=[0,
 df.columns = ["Wavenumber", "Transmittance"] # Naming Columns
 gaussian_smoothing(df)
 pri_x,pri_y = x_y_assignment(df)
-pri_min_pos,pri_min_height_neg = maxima_peak_assignment(pri_x, pri_y)
+pri_x_peaks,pri_y_peaks = maxima_peak_assignment(pri_x, pri_y)
+pri_pro_x, pri_pro_ymin, pri_pro_ymax = prominence_assignment(pri_x, pri_y)
+pri_width_full_y, pri_width_full_x_min, pri_width_full_x_max = width_assignment(pri_x, pri_y)
 pri_peakdf = transpose_record_peaks(pri_x, pri_y)
 pri_blc = baseline_correction(pri_y, lam, p)
 
@@ -137,7 +153,9 @@ df2 = pd.read_csv(list_full_paths(data_dir)[3], sep=' ', header=None, usecols=[0
 df2.columns = ["Wavenumber", "Transmittance"] # Naming columns
 gaussian_smoothing(df2)
 sec_x,sec_y = x_y_assignment(df2)
-sec_min_pos,sec_min_height_neg = maxima_peak_assignment(sec_x, sec_y)
+sec_x_peaks,sec_y_peaks = maxima_peak_assignment(sec_x, sec_y)
+sec_pro_x, sec_pro_ymin, sec_pro_ymax = prominence_assignment(sec_x, sec_y)
+sec_width_full_y, sec_width_full_x_min, sec_width_full_x_max = width_assignment(sec_x, sec_y)
 sec_peakdf2 = transpose_record_peaks(sec_x, sec_y)
 sec_blc = baseline_correction(sec_y, lam, p)
 
@@ -150,13 +168,17 @@ ax.set_title(list_full_paths(data_dir)[0])
 ax1.set_title(list_full_paths(data_dir)[7])
 ax.plot(pri_x, pri_y, color='red', linewidth=0.5) # Sub plot one of line x,y
 ax1.plot(sec_x, sec_y, color='red', linewidth=0.5) # Sub plot two of line x2,y2
-ax.scatter(pri_min_pos, pri_min_height_neg, color = 'black', s = 5, marker = 'X', label = 'Prominent Peaks') # Sub plot one minima identification
-ax1.scatter(sec_min_pos, sec_min_height_neg, color = 'black', s = 5, marker = 'X') # Sub plot two minima identification
+ax.scatter(pri_x_peaks, pri_y_peaks, color = 'black', s = 5, marker = 'X', label = 'Prominent Peaks') # Sub plot one minima identification
+ax1.scatter(sec_x_peaks, sec_y_peaks, color = 'black', s = 5, marker = 'X') # Sub plot two minima identification
+ax.vlines(pri_pro_x, pri_pro_ymin, pri_pro_ymax, color='black', linewidth=1, linestyle='dashed')
+ax1.vlines(sec_pro_x, sec_pro_ymin, sec_pro_ymax, color='black', linewidth=1, linestyle='dashed')
+ax.hlines(pri_width_full_y, pri_width_full_x_min, pri_width_full_x_max, color='green')
+ax1.hlines(sec_width_full_y, sec_width_full_x_min, sec_width_full_x_max, color='green')
 fig.legend()
 fig.suptitle("FT-IR Spectra Comparison")
 plt.xlabel('Wavenumber (cm-1)')
 fig.text(0.04, 0.5, 'Reflectance', ha='center', va='center', rotation='vertical')
-plt.xlim(x_axis_limits(df)) # defines the x axis limits by the datasets max and min values
+# plt.xlim(x_axis_limits(df)) # defines the x axis limits by the datasets max and min values
 plt.ylim(0.00, 1.20)
 # ax.invert_yaxis()
 t.stop()
