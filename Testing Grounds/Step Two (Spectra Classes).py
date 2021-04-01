@@ -17,7 +17,7 @@ t = Timer(name="class", text="Total Runtime: {:.4f}s")
 t.start()
 
 # ----- Variable Assignment -----
-
+assign_width = True
 # ----- File Import -----
 def list_full_paths(directory): # List of files in project data with full path
     return [os.path.join(directory, file) for file in os.listdir(directory)] # takes file names from directory and stitches directory to form path
@@ -42,6 +42,21 @@ class Spectra():
         x = np.array(self.df.iloc[:, 0]) # Assigning x value based on column index over name
         y = np.array(self.df.iloc[:, 1]) # Assigning y value based on column index over name
         self.x, self.y = x, y
+    
+    def x_axis_limiting(self):
+        x = self.x
+        y = self.y
+        if assign_width == False:
+            self.x = x
+            self.y = y
+        if assign_width == True:
+            a, b  = input("Input desired range:").split()
+            x_min, x_max = [int(x) for x in [a,b]]
+            idx = np.where(np.logical_and(x>=x_min, x<=x_max))
+            x1 = x[idx]
+            y1 = y[idx]
+            self.x = x1
+            self.y = y1
 
     def peak_profile_generation(self):
         # Peak cordinate generation
@@ -63,19 +78,19 @@ class Spectra():
     def baseline_correction(self):
         self.baseline_values = peakutils.baseline(self.y)
         # self.y = self.y - self.baseline_values
-        # self.y[self.y < 0] = 0
 
     def plot(self):
         fig = plt.figure()
         fig.canvas.set_window_title('Spectra Comparison.fig')
-        plt.plot(self.x, self.y, color='red', linewidth=0.5) # Sub plot one of line x,y
-        plt.plot(self.x, self.baseline_values, color='blue', linewidth=0.5)
+        plt.plot(self.x, self.y, color='red', linewidth=1.5) # Sub plot one of line x,y
+        # plt.plot(self.x, self.baseline_y, color='red', linewidth=1.5) # Sub plot one of line x,y
+        plt.plot(self.x, self.baseline_values, color='blue', linewidth=0.5, label='Baseline Correction')
         # plt.plot(self.x, self.base_ploy, "-", color='grey', label="polynomial")
         plt.scatter(self.peaks_x, self.peaks_y, color = 'black', s = 5, marker = 'X', label = 'Prominent Peaks') # Sub plot one minima identification
         # plt.scatter(self.peaks_x, self.eval_height, color = 'black', s = 5, marker = 'X', label = 'Eval_height')
         # plt.scatter(self.intersect_x, self.intersect_y, color = 'orange', s = 5, marker = 'o', label = 'Intercetion')
-        plt.vlines(self.prom_x, self.prom_y_min, self.prom_y_max, color='black', linewidth=1, linestyle='dashed')
-        plt.hlines(self.prom_y_min, self.min_pwidth, self.max_pwidth, color='green')
+        plt.vlines(self.prom_x, self.prom_y_min, self.prom_y_max, color='black', linewidth=1, linestyle='dashed', label='Peak Prominence')
+        # plt.hlines(self.prom_y_min, self.min_pwidth, self.max_pwidth, color='green')
         fig.legend()
         fig.suptitle("FT-IR Spectra Comparison")
         plt.xlabel('Wavenumber (cm-1)')
@@ -87,6 +102,7 @@ class Spectra():
 print("---------- START ----------")
 pri_spectra = Spectra(file_import_selection())
 pri_spectra.x_y_assignment()
+pri_spectra.x_axis_limiting()
 pri_spectra.baseline_correction()
 pri_spectra.peak_profile_generation()
 pri_spectra.plot()

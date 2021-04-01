@@ -17,3 +17,9 @@ Reworked Function variable assignment to limit function calling to minimum neede
 Baseline correction implemented
 - Least square implementation 
 Removed y axis inversion due to reflectance 
+
+## (01.04.21 02:38)
+Primary objective script under construction:
+To Implement:
+- Peak Detection 
+- Peak Deconvolution 
