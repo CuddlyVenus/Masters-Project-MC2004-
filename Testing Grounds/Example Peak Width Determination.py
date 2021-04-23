@@ -14,7 +14,7 @@ x1 = x + 5
 
 amp1 = 1000
 amp2 = 2000
-sigma1 = 10
+sigma1 = 5
 cen1 = 50
 wight_factor = 1
 y_array_gauss = amp1*(1/(sigma1*(np.sqrt(2*np.pi))))*(np.exp((-1.0/2.0)*(((x-cen1)/sigma1)**2)))
