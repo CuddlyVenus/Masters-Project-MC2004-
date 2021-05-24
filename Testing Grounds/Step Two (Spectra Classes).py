@@ -59,17 +59,13 @@ class Spectra():
             self.y = y1
 
     def peak_profile_generation(self):
-        # Peak cordinate generation
-        peaks, _ = signal.find_peaks(self.y, distance=20, prominence=0.01)
-        peaks_x = self.x[peaks]
-        peaks_y = self.y[peaks]
-        # Prominence cordinate generation
         self.prominence, left_bases, right_bases = signal.peak_prominences(self.y, peaks)# produces the indices of the peaks in relation to y axis1
         y_min = self.y[peaks] - self.prominence
         y_max = self.y[peaks]
         x = self.x[peaks]
         min_pwidth = self.x[left_bases]
         max_pwidth = self.x[right_bases]
+        peak_widths = max_width - min_width
         # Width cordinate generation
         # width = signal.peak_widths(self.y, peaks, rel_height=1, prominence_data=(y_min, left_bases, right_bases))
         self.peaks_x, self.peaks_y = peaks_x, peaks_y 

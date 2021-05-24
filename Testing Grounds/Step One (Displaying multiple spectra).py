@@ -27,13 +27,6 @@ def list_full_paths(directory): # List of files in project data with full path
     return [os.path.join(directory, file) for file in os.listdir(directory)] # takes file names from directory and stitches directory to form path
 
 def computeTicks (x, step = 100): # A function for assigning axis tick values based on a 1d array
-    """
-    Computes domain with given step encompassing series x
-    @ params
-    x    - Required - A list-like object of integers or floats
-    step - Optional - Tick frequency
-    Here lies dark fuckery 
-    """
     xMax, xMin = math.ceil(max(x)), math.floor(min(x))
     dMax, dMin = xMax + abs((xMax % step) - step) + (step if (xMax % step != 0) else 0), xMin - abs((xMin % step))
     return range(dMin, dMax, step)
